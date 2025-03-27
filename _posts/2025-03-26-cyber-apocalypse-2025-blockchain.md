@@ -575,7 +575,7 @@ With this, we solved the challenge and we can fetch the flag from the docker con
 
 ## Useful Resources
 
-- [REMIX IDE](remix.ethereum.org)
+- [REMIX IDE](https://remix.ethereum.org)
 - [web3.py Documentation](https://web3py.readthedocs.io/en/stable/)
 - [Math.sol](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/Math.sol)
 - [A curated list of blockchain CTF writeups](https://github.com/blockthreat/blocksec-ctfs)
