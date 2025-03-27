@@ -8,10 +8,9 @@ media_subpath: /images/htb_cyberapocalypse_2025/
 image:
     path: banner.jpg
 ---
-## Preface
 This write-up contains the solutions to all the Blockchain challenges in the CTF hosted by HackTheBox [Cyber Apocalypse 2025: Tales from Eldoria](https://ctf.hackthebox.com/event/details/cyber-apocalypse-ctf-2025-tales-from-eldoria-2107), as well as my thought process in finding these solutions.
 
-In all of these chalelnges, we are provided with the **.sol** files of the smart contracts deployed in the private Ethereum network, and by connecting to the spawned docker container using something like `nc`, our player address, our player private key, and the addresses of the setup and target contracts.
+In all of these challenges, we are provided with the **.sol** files of the smart contracts deployed in the private Ethereum network, and by connecting to the spawned docker container using something like `nc`, our player address, our player private key, and the addresses of the setup and target contracts.
 
 For solving the challenges, I decided to use web3.py for interacting with the contracts, and the [REMIX IDE](https://remix.ethereum.org/) for generating any needed ABIs.
 
@@ -268,7 +267,7 @@ This function is a bit long, but, in essence, it just allows us to swap our prev
 
 Having looked at all the code, we can clearly see the exploit in the use of Rounding, allowing us to swap very small amounts of ETH into a full token, and then refunding them all back to pass the challenge.
 
-> In this process I chose to swap ETH for MAL since it had a better exchange ratio, but HLS should also work.
+> In this process I chose to swap ETH for MAL since it had a better exchange ratio, but HLS should also work since it also rounds up for positive numbers.
 {: .prompt-tip }
 
 We can use this function to buy all the MAL, using 1 wei per MAL:
