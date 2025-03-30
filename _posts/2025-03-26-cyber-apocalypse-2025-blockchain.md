@@ -2,8 +2,8 @@
 layout: post
 title: "Cyber Apocalypse 2025: Blockchain Challenges"
 date: 2025-03-27 00:00 +0000
-categories: [HackTheBox, CTF]
-tags: [blockchain, web3, python, solidity]
+categories: [CTF, HackTheBox]
+tags: [blockchain, web3, python, solidity, ethereum]
 media_subpath: /images/htb_cyberapocalypse_2025/
 image:
     path: banner.jpg
