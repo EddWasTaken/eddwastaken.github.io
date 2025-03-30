@@ -286,7 +286,7 @@ The `create_token_account()` function uses `get_account_info()` to check if it e
 > I kept the imports equal to what was on app.py, making things like SolanaTransaction have a different name compared to the normal import.
 {: .prompt-info }
 
-After this, let's check what the web page says if we try to transfer tokens. By trying to transfer 1 Ethereum Bubble to Solana, we get `execution reverted: Inssuficient BBL in Bridge`, and by doing the inverse operation, the page says `Error: insufficient funds`, which leads us to the conclusion that we have no `$BBL` on either account.
+After this, let's check what the web page says if we try to transfer tokens. By trying to transfer 1 Ethereum Bubble to Solana, we get `execution reverted: Insufficient BBL in Bridge`, and by doing the inverse operation, the page says `Error: insufficient funds`, which leads us to the conclusion that we have no `$BBL` on either account.
 
 For our next step, we'll analyze the Ethereum Contract files to find out where the airdrop is, and what the `$FTH` tokens are, since the Golden Bridge deals with `$BBL`.
 
@@ -297,7 +297,7 @@ Looking in the `/eth/src` folder, we find 4 contract files, let's take a look at
 
 ### Feather.sol
 
-```
+```solidity
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
@@ -329,7 +329,7 @@ The **Feather** contract is quite simple, it has the `onlyOwner()` modifier whic
 
 ### Bubble.sol
 
-```
+```solidity
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
@@ -361,7 +361,7 @@ The **Bubble** contract is also simple, it lets us know a Bubble (`$BBL`) is a w
 
 ### Bridge.sol
 
-```
+```solidity
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
@@ -423,7 +423,7 @@ The **Bridge** contract is slightly more complicated, so let's analyze it:
 
 ### Setup.sol
 
-```
+```solidity
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.29;
 

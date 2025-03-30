@@ -20,7 +20,7 @@ In all these challenges the **Setup** contract contains the isSolved() function 
 **Difficulty: Very Easy**
 
 We begin with `Eldorion`, analyzing the structure of the **Eldorion.sol** file:
-```
+```solidity
 contract Eldorion {
     uint256 public health = 300;
     uint256 public lastAttackTimestamp;
@@ -57,7 +57,7 @@ The solution? Deploy our own contract that interacts with the `Eldorion` contrac
 
 The **ExploitAttack.sol** file I used to achieve this:
 
-```
+```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
@@ -116,7 +116,7 @@ After these steps, we can fetch the flag from the docker instance!
 **Difficulty: Easy**
 
 To start this challenge, we'll look in a different direction and check the **Setup.sol** file:
-```
+```solidity
 contract Setup {
     HeliosDEX public TARGET;
     address public player;
@@ -138,7 +138,7 @@ contract Setup {
 From this contract, we can find our win condition which is having 20ETH in our wallet. We start with 12ETH , so right away I figured we had to add funds to our wallet somehow.
 
 For our next step we analyze the target contract code, the **HeliosDEX.sol** file, this time in parts:
-```
+```solidity
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 <...>
@@ -164,7 +164,7 @@ contract HeliosDEX {
 This first part has the exchange ratios for each token, the flat fee in every transaction, the initial setup from which we can gather there are 1000 of each token, and, most importantly, a `_tradelock` variable that makes sure we don't swap ETH for tokens at the same time.
 
 Moving on to the modifiers:
-```
+```solidity
     modifier underHeliosEye {
         require(msg.value > 0, "HeliosDEX: Helios sees your empty hand! Only true offerings are worthy of a HeliosBarter");
         _;
@@ -181,7 +181,7 @@ Moving on to the modifiers:
 The modifiers are quite simple, the first one blocks us from trading 0 ETH for tokens, and the second one stops us from making concurrent transactions, using the variable discussed before.
 
 Now the swap functions:
-```
+```solidity
     function swapForELD() external payable underHeliosEye {
         uint256 grossELD = Math.mulDiv(msg.value, exchangeRatioELD, 1e18, Math.Rounding(0));
         uint256 fee = (grossELD * feeBps) / 10_000;
@@ -211,7 +211,7 @@ Now the swap functions:
 
 Looking into the code of all of the swap functions, we can see the only thing that changes is the Rounding used. To understand the differences between rounding, we can check the Math.sol library that this contract imports from:
 
-```
+```solidity
 enum Rounding {
     Floor, // Toward negative infinity
     Ceil, // Toward positive infinity
@@ -227,7 +227,7 @@ We can associate each field to a number used, with
 - Rounding(3) = Expand
 
 Finally, the **oneTimeRefund** function:
-```
+```solidity
     function oneTimeRefund(address item, uint256 amount) external heliosGuardedTrade {
         require(!hasRefunded[msg.sender], "HeliosDEX: refund already bestowed upon thee");
         require(amount > 0, "HeliosDEX: naught for naught is no trade. Offer substance, or be gone!");
@@ -345,7 +345,7 @@ We once again connect to the docker instance and get the flag!
 **Difficulty: Medium**
 
 We begin by analyzing the **Setup.sol** file:
-```
+```solidity
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.28;
@@ -373,7 +373,7 @@ contract Setup {
 We can see there's a `_secret` we're passing into **EldoriaGate**, and our win condition this time is becoming an Usurper (we'll get to that in a second), through the same contract.
 
 Looking at the **EldoriaGate.sol** file:
-```
+```solidity
 <...>
 import { EldoriaGateKernel } from "./EldoriaGateKernel.sol";
 
@@ -398,7 +398,7 @@ We can see there's a Villager structure with an id, an authentication check, and
 
 Looking at the enter function:
 
-```
+```solidity
     function enter(bytes4 passphrase) external payable {
         bool isAuthenticated = kernel.authenticate(msg.sender, passphrase);
         require(isAuthenticated, "Authentication failed");
@@ -418,7 +418,7 @@ It also takes the value of our transaction and checks our contribution, to assig
 {: .prompt-info }
 
 Moving on to the checkUsurper function:
-```
+```solidity
     function checkUsurper(address _villager) external returns (bool) {
         (uint id, bool authenticated , uint8 rolesBitMask) = kernel.villagers(_villager);
         bool isUsurper = authenticated && (rolesBitMask == 0);
@@ -438,7 +438,7 @@ From this function we can extract the logic behind becoming an usurper, which is
 
 We'll try to make the first way work, but first we'll have to look at the main logic used to authenticate and assign roles in the **EldoriaGateKernel** contract file:
 
-```
+```solidity
 <...>
 contract EldoriaGateKernel {
     bytes4 private eldoriaSecret;
@@ -458,7 +458,7 @@ contract EldoriaGateKernel {
 In this initial snippet we can see the roles are all the `uint8` type, and that they're using bitshifts to the left.
 
 In the next part of the contract file:
-```
+```solidity
     <...>
     constructor(bytes4 _secret) {
         eldoriaSecret = _secret;
@@ -478,7 +478,7 @@ In the next part of the contract file:
 We can see the previous `_secret` is saved in the `eldoriaSecret` variable of the same type, and that the `frontend` variable is saved as the `msg.sender`, which is the address of the **EldoriaGate** contract.
 
 The modifier **onlyFrontend** makes it so only the **EldoriaGate** contract can call functions this is attached to, preventing us from making any transactions with them. Next up, looking at the functions declared:
-```
+```solidity
     function authenticate(address _unknown, bytes4 _passphrase) external onlyFrontend returns (bool auth) {
         assembly {
             let secret := sload(eldoriaSecret.slot)            
@@ -520,7 +520,7 @@ passphrase_bytes = secret[-4:]
 
 Since we only want 4 bytes, we discard the other 28. With this, we can call the enter function and authenticate successfully! Before that though, let's look at the next and final function of the **EldoriaGateKernel** contract:
 
-```
+```solidity
     function evaluateIdentity(address _unknown, uint8 _contribution) external onlyFrontend returns (uint id, uint8 roles) {
         assembly {
             mstore(0x00, _unknown)
