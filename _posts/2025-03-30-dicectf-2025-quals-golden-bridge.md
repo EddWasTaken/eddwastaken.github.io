@@ -240,8 +240,8 @@ So these are the endpoints we gathered:
 - `/player.json`: Contains the player's account and useful contract addresses
 - `/eth`: Contains the Ethereum RPC
 - `/sol`: Contains the Solana RPC
-- `/toSol`:
-- `/toEth`:
+- `/toSol`: Sending **Ethereum Bubbles** to **Solana Bubbles**
+- `/toEth`: Sending **Solana Bubbles** to **Ethereum Bubbles**
 - `/flag`: Contains the flag (after we solve the challenge)
 
 ### Creating ATA
